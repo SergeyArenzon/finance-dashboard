@@ -6,6 +6,10 @@ import cookieParser from 'cookie-parser';
 import authenticate  from './middlewares/auth.js';
 import bcrypt from 'bcrypt'
 import 'dotenv/config';
+import mongoose from "mongoose";
+import User from './models/user.js';
+
+
 
 const app = express();
 
@@ -17,28 +21,23 @@ const {
     JWT_SECRET
 } = process.env
 
-let db;
-
-// Connect to MongoDB
-MongoClient.connect(DB_URL, { useUnifiedTopology: true })
-  .then(client => {
-    console.log('Connected to MongoDB');
-    db = client.db(DB_NAME);
-  })
-  .catch(err => console.error('Error connecting to MongoDB', err));
+mongoose.connect(DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => console.log('Connected to MongoDB'));
 
 // Secret key for JWT signing
 
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-// Login route
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
   
     try {
       // Find the user by username
-      const user = await db.collection('users').findOne({ username });
+      const user = await User.findOne({ username });
   
       // If user not found, return 401 Unauthorized
       if (!user) {

@@ -14,11 +14,7 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-// / Create user model
+// Create user model
 const User = mongoose.model('User', userSchema);
 
-
-// Login route
-  
-
-  export default User;
+export default User;

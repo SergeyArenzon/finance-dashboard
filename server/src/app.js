@@ -33,11 +33,11 @@ app.use(cookieParser());
 
 
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
   
     try {
-      // Find the user by username
-      const user = await User.findOne({ username });
+      // Find the user by email
+      const user = await User.findOne({ email });
   
       // If user not found, return 401 Unauthorized
       if (!user) {
@@ -67,20 +67,20 @@ app.post('/login', async (req, res) => {
   });
 
 app.post('/signup', async (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
   
     try {
-      // Check if the username already exists
-      const existingUser = await db.collection('users').findOne({ username });
+      // Check if the email already exists
+      const existingUser = await db.collection('users').findOne({ email });
       if (existingUser) {
-        return res.status(400).json({ message: 'Username already exists' });
+        return res.status(400).json({ message: 'email already exists' });
       }
   
       // Hash the password
       const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
   
       // Create a new user object with hashed password
-      const newUser = { username, password: hashedPassword };
+      const newUser = { email, password: hashedPassword };
   
       // Insert the new user into the database
       await db.collection('users').insertOne(newUser);

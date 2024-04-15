@@ -10,4 +10,4 @@ client:
 server:
 1. run "npm start"
 
-
+![Image Alt text](/images/example.jpg)

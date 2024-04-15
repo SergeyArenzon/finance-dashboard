@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
+import config from '../config.js';
 
 
 const {
     COOKIE_NAME,
     JWT_SECRET
-} = process.env
+} = config
 
 
 
@@ -20,6 +21,7 @@ const authenticate = (req, res, next) => {
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
       if (err) {
         console.error('JWT verification failed:', err.message);
+        res.clearCookie(COOKIE_NAME);
         return res.status(401).json({ message: 'Unauthorized' });
       }
   

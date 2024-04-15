@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import {z} from "zod";
-import { registerSchema } from "@/validators/auth";
+import { authSchema } from "@/validators/auth";
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -12,13 +12,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
+import { IUser } from "@/types/user.type";
  
 
-export function AuthForm() {
+type AuthFormProps = {
+  handleLoginSubmit: (user: IUser) => void
+  submitLabel: string
+}
+
+export function AuthForm({handleLoginSubmit, submitLabel} : AuthFormProps) {
     // 1. Define your form.
-    const form = useForm<z.infer<typeof registerSchema>>({
-      resolver: zodResolver(registerSchema),
+    const form = useForm<z.infer<typeof authSchema>>({
+      resolver: zodResolver(authSchema),
       defaultValues: {
         email: "",
         password: ""
@@ -28,9 +34,10 @@ export function AuthForm() {
     
    
     // 2. Define a submit handler.
-    const  onSubmit = (values: z.infer<typeof registerSchema>) => {
+    const  onSubmit = (values: z.infer<typeof authSchema>) => {
       // Do something with the form values.
       // ✅ This will be type-safe and validated.
+      handleLoginSubmit(values)
       console.log(values)
     }
 
@@ -38,19 +45,17 @@ export function AuthForm() {
 
     return (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 bg-main w-96  p-3 rounded-md">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-3 rounded-md bg-primary h-min w-80">
+            <h1 className="font-bold text-3xl text-white">{submitLabel}</h1>
             <FormField
               control={form.control}
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>email</FormLabel>
+                  <FormLabel className="text-white">email</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="email" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -60,18 +65,15 @@ export function AuthForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>password</FormLabel>
+                  <FormLabel className="text-white">password</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input type="password" placeholder="password" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-second" >Submit</Button>
+            <Button type="submit" className="bg-foreground hover:bg-secondary-foreground" >{submitLabel}</Button>
           </form>
         </Form>
       )

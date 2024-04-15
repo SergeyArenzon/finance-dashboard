@@ -11,7 +11,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 6
-    }
+    },
+    coins: [String]
+
 });
 
 // Create user model
